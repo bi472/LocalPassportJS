@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+</head>
+<body>
+    <h1>Sign Up</h1>
+  <form id="signupForm" action="/api/user/signup" method="POST">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required>
+    <br>
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required>
+    <br>
+    <button type="submit">Sign UP</button>
+  </form>
+  <p id="message"></p>
+  <script>
+    document.getElementById('signupForm').addEventListener('submit', function(event) {
+      event.preventDefault(); // Предотвращаем отправку формы по умолчанию
+      
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      
+      // Отправляем POST-запрос на сервер
+      fetch('/api/user/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username: username, password: password })
+      })
+      .then(response => {
+        if (response.ok) {
+          window.location.href = '/api/user/me'; // Перенаправляем на страницу профиля при успешной регистрации
+        } else if (response.status === 409) {
+          document.getElementById('message').textContent = 'Username already exists'; // Выводим сообщение о существующем имени пользователя
+        } else {
+          document.getElementById('message').textContent = 'Error signing up'; // Выводим общее сообщение об ошибке регистрации
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    });
+    </script>
+    
+</body>
+</html>
